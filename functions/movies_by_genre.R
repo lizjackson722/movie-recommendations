@@ -1,5 +1,7 @@
 library(dplyr)
 
+source('functions/load_data.R') # retrieve data from the web
+
 genre_list = c("Action", "Adventure", "Animation", 
                "Children's", "Comedy", "Crime",
                "Documentary", "Drama", "Fantasy",
@@ -7,21 +9,8 @@ genre_list = c("Action", "Adventure", "Animation",
                "Mystery", "Romance", "Sci-Fi", 
                "Thriller", "War", "Western")
 
-myurl = "https://liangfgithub.github.io/MovieData/"
-
-movies = readLines(paste0(myurl, 'movies.dat?raw=true'))
-movies = strsplit(movies,
-                  split = "::",
-                  fixed = TRUE,
-                  useBytes = TRUE)
-movies = matrix(unlist(movies), ncol = 3, byrow = TRUE)
-movies = data.frame(movies, stringsAsFactors = FALSE)
-colnames(movies) = c('MovieID', 'Title', 'Genres')
-movies$MovieID = as.integer(movies$MovieID)
-
-ratings = read.csv(paste0(myurl, 'ratings.dat?raw=true'), sep = ':',
-                   colClasses = c('integer', 'NULL'), header = FALSE)
-colnames(ratings) = c('UserID', 'MovieID', 'Rating', 'Timestamp')
+movies <- get_movies()
+ratings <- get_ratings()
 
 make_genre_matrix <- function() {
   genres = as.data.frame(movies$Genres, stringsAsFactors=FALSE)
