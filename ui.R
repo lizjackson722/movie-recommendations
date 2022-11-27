@@ -66,7 +66,16 @@ shinyUI(fluidPage (
                                   "favorite_genre", "Favorite genre", genre_list
                                 )),
                                 br(),
-                                withBusyIndicatorUI(actionButton("submit_genre", "Submit", class = "btn-warning")),
+                                withBusyIndicatorUI(actionButton("submit_genre", "Submit", class = "btn-warning"))
+                              )
+                            ),
+                            fluidRow(
+                              useShinyjs(),
+                              box(
+                                width = 12,
+                                status = "info",
+                                solidHeader = TRUE,
+                                title = "The top-rated movies from your favorite genre:",
                                 br(),
                                 tableOutput("genre_results")
                               )
