@@ -51,7 +51,6 @@ top_movie_num <- 20
 ###################
 
 shinyServer(function(input, output, session) {
-  
   ###################
   # Movies by genre #
   ###################
@@ -71,7 +70,8 @@ shinyServer(function(input, output, session) {
       
       # get the user's rating data
       genre <- input$favorite_genre
-      movie_list <- as.vector(top_by_genre[which(genre_list == genre),])
+      movie_list <-
+        as.vector(top_by_genre[which(genre_list == genre), ])
       
       # Return the results
       recom_results <- data.table(
@@ -98,10 +98,10 @@ shinyServer(function(input, output, session) {
           status = "success",
           solidHeader = TRUE,
           title = paste0("Rank ", (i - 1) * num_movies + j),
-          div(
-            style = "text-align:center",
-            img(src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150)
-          ),
+          div(style = "text-align:center",
+              img(
+                src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150
+              )),
           div(style = "text-align:center; color: #999999; font-size: 80%",
               movies$Year[recom_result$MovieID[(i - 1) * num_movies + j]]),
           div(style = "text-align:center; font-size: 100%",
@@ -163,7 +163,8 @@ shinyServer(function(input, output, session) {
       # get the indices of which cells in the matrix should be predicted
       # predict all movies the current user has not yet rated
       items_to_predict <- which(rmat[, 1] == 0)
-      prediction_indices <- as.matrix(expand.grid(items_to_predict, 1))
+      prediction_indices <-
+        as.matrix(expand.grid(items_to_predict, 1))
       
       # run the UBCF-alogrithm
       res <-
@@ -208,10 +209,10 @@ shinyServer(function(input, output, session) {
           status = "success",
           solidHeader = TRUE,
           title = paste0("Rank ", (i - 1) * num_movies + j),
-          div(
-            style = "text-align:center",
-            img(src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150)
-          ),
+          div(style = "text-align:center",
+              img(
+                src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150
+              )),
           div(style = "text-align:center; color: #999999; font-size: 80%",
               movies$Year[recom_result$MovieID[(i - 1) * num_movies + j]]),
           div(style = "text-align:center; font-size: 100%",

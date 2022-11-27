@@ -17,8 +17,8 @@ shinyUI(fluidPage (
     
     dashboardSidebar(disable = FALSE,
                      sidebarMenu(
-                       menuItem("Select by rating", tabName = "UBCF", icon = icon("dashboard")),
-                       menuItem("Select by genre", tabName = "Genre", icon = icon("th"))
+                       menuItem("Select by rating", tabName = "UBCF", icon = icon("star")),
+                       menuItem("Select by genre", tabName = "Genre", icon = icon("fire"))
                      )),
     
     dashboardBody(includeCSS("css/movies.css"),
@@ -71,4 +71,4 @@ shinyUI(fluidPage (
                             ))
                   ))
   )
-)) 
+))

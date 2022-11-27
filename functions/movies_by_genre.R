@@ -81,6 +81,3 @@ make_top_movie_list <- function(N) {
     top_by_genre[i,] <<- mean_rating_by_genre(genre_list[i], N)
   }
 }
-
-# make_top_movie_list()
-
