@@ -93,7 +93,7 @@ shinyServer(function(input, output, session) {
       
       # get the user's rating data
       genre <- input$favorite_genre
-      movie_list <- mean_rating_by_genre(genre, 20)
+      movie_list <- as.vector(top_by_genre[which(genre_list == genre),])
       
       # Return the results
       recom_results <- data.table(

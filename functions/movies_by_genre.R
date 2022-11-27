@@ -7,7 +7,40 @@ genre_list = c("Action", "Adventure", "Animation",
                "Mystery", "Romance", "Sci-Fi", 
                "Thriller", "War", "Western")
 
+myurl = "https://liangfgithub.github.io/MovieData/"
+
+movies = readLines(paste0(myurl, 'movies.dat?raw=true'))
+movies = strsplit(movies,
+                  split = "::",
+                  fixed = TRUE,
+                  useBytes = TRUE)
+movies = matrix(unlist(movies), ncol = 3, byrow = TRUE)
+movies = data.frame(movies, stringsAsFactors = FALSE)
+colnames(movies) = c('MovieID', 'Title', 'Genres')
+movies$MovieID = as.integer(movies$MovieID)
+
+ratings = read.csv(paste0(myurl, 'ratings.dat?raw=true'), sep = ':',
+                   colClasses = c('integer', 'NULL'), header = FALSE)
+colnames(ratings) = c('UserID', 'MovieID', 'Rating', 'Timestamp')
+
+make_genre_matrix <- function() {
+  genres = as.data.frame(movies$Genres, stringsAsFactors=FALSE)
+  tmp = as.data.frame(tstrsplit(genres[,1], '[|]',
+                                type.convert=TRUE),
+                      stringsAsFactors=FALSE)
+  m = length(genre_list)
+  genre_matrix = matrix(0, nrow(movies), length(genre_list))
+  for(i in 1:nrow(tmp)){
+    genre_matrix[i, genre_list %in% tmp[i,]] = 1
+  }
+  rownames(genre_matrix) = movies$MovieID
+  colnames(genre_matrix) = genre_list
+  remove("tmp", "genres")
+  return(genre_matrix)
+}
+
 get_rating_count <- function(genre) {
+  genre_matrix <- make_genre_matrix()
   genre_index <- which(genre_matrix[,genre] == 1)
   movie_list <- movies[genre_index,]
   
@@ -18,20 +51,10 @@ get_rating_count <- function(genre) {
   return(rating_count)
 }
 
-validate_N <- function(N, matrix) {
-  if((class(N) != "numeric") || (N <= 0)) { # default to 0 if user gave bad N
-    N <- 10
-  } else if (N > nrow(matrix)) {
-    N <- nrow(matrix)
-  }
-  
-  return(N)
-}
-
 # Recommendation system 1: Return top N movies in the genre ordered by the
 # mean rating per movie. If multiple movies have the same rating, the movie with
 # more total ratings is returned first.
-mean_rating_by_genre <- function(genre, N) {
+mean_rating_by_genre <- function(genre) {
   
   rating_count <- get_rating_count(genre)
   
@@ -43,10 +66,16 @@ mean_rating_by_genre <- function(genre, N) {
   rating_means <- rating_means %>% inner_join(rating_count, by = "MovieID")
   rating_means <- rating_means[order(-rating_means$MeanRating, -rating_means$TotalRatings),]
   
-  N <- validate_N(N, rating_means)
-  
-  movie_list <- rating_means[1:N, "MovieID"]
+  movie_list <- rating_means[1:20, "MovieID"]
   movie_indices <- which(movies$MovieID %in% movie_list$MovieID)
   
   return(movie_indices)
+}
+
+
+# Make a cached list of the top 20 films of each genre, to improve performance
+# on the front end
+top_by_genre <- matrix(0, nrow = length(genre_list), ncol = 20)
+for (i in 1:length(genre_list)) {
+  top_by_genre[i,] <- mean_rating_by_genre(genre_list[i])
 }

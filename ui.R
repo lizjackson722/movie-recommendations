@@ -16,8 +16,8 @@ shinyUI(fluidPage (
     
     dashboardSidebar(disable = FALSE,
                      sidebarMenu(
-                       menuItem("UBCF", tabName = "UBCF", icon = icon("dashboard")),
-                       menuItem("Popular", tabName = "Popular", icon = icon("th"))
+                       menuItem("Select by rating", tabName = "UBCF", icon = icon("dashboard")),
+                       menuItem("Select by genre", tabName = "Genre", icon = icon("th"))
                      )),
     
     dashboardBody(includeCSS("css/movies.css"),
@@ -49,7 +49,7 @@ shinyUI(fluidPage (
                                 tableOutput("ubcf_results")
                               )
                             )),
-                    tabItem(tabName = "Popular",
+                    tabItem(tabName = "Genre",
                             fluidRow(
                               box(
                                 width = 12,
