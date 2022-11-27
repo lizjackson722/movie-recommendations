@@ -100,7 +100,7 @@ shinyServer(function(input, output, session) {
           title = paste0("Rank ", (i - 1) * num_movies + j),
           div(style = "text-align:center",
               img(
-                src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150
+                src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], style = "max-width:100%;"
               )),
           div(style = "text-align:center; color: #999999; font-size: 80%",
               movies$Year[recom_result$MovieID[(i - 1) * num_movies + j]]),
@@ -128,7 +128,7 @@ shinyServer(function(input, output, session) {
           width = 2,
           div(
             style = "text-align:center",
-            img(src = movies$image_url[(i - 1) * num_movies + j], style = "max-height:150;")
+            img(src = movies$image_url[(i - 1) * num_movies + j], style = "max-width:100%;")
           ),
           div(style = "text-align:center; color: #999999; font-size: 80%", movies$Year[(i -
                                                                                           1) * num_movies + j]),
@@ -211,7 +211,7 @@ shinyServer(function(input, output, session) {
           title = paste0("Rank ", (i - 1) * num_movies + j),
           div(style = "text-align:center",
               img(
-                src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150
+                src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], style = "max-width:100%;"
               )),
           div(style = "text-align:center; color: #999999; font-size: 80%",
               movies$Year[recom_result$MovieID[(i - 1) * num_movies + j]]),

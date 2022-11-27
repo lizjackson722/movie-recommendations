@@ -3,6 +3,7 @@
    height: 450px;
    overflow-x: scroll;
    overflow-y: scroll;
+   max-width: 100%;
 }
 
 .border-box {
