@@ -31,7 +31,9 @@ get_user_ratings <- function(value_list) {
 #############
 # Load data #
 #############
-movies = readLines('data/movies.dat')
+myurl = "https://liangfgithub.github.io/MovieData/"
+
+movies = readLines(paste0(myurl, 'movies.dat?raw=true'))
 movies = strsplit(movies,
                   split = "::",
                   fixed = TRUE,
@@ -57,12 +59,8 @@ movies$image_url = sapply(movies$MovieID,
                             paste0(small_image_url, x, '.jpg?raw=true'))
 
 # Ratings
-ratings = read.csv(
-  'data/ratings.dat',
-  sep = ':',
-  colClasses = c('integer', 'NULL'),
-  header = FALSE
-)
+ratings = read.csv(paste0(myurl, 'ratings.dat?raw=true'), sep = ':',
+                   colClasses = c('integer', 'NULL'), header = FALSE)
 colnames(ratings) = c('UserID', 'MovieID', 'Rating', 'Timestamp')
 
 # reshape to movies x user matrix
