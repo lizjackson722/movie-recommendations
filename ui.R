@@ -10,6 +10,7 @@ source('functions/helpers.R')
 source('functions/movies_by_genre.R')
 
 shinyUI(fluidPage (
+  uiOutput("make_top_movie_list"),
   dashboardPage(
     skin = "blue",
     dashboardHeader(title = "Movie Recommendations", titleWidth = 400),

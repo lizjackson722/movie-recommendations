@@ -43,6 +43,8 @@ ratingmat <-
 dimnames(ratingmat) <-
   list(MovieID = as.character(unique(ratings$MovieID)), UserID = as.character(sort(unique(ratings$UserID))))
 
+# top_movie_num should ideally be 0 mod 5 because there are 5 movies in a result row
+top_movie_num <- 20
 
 ###################
 # Server function #
@@ -53,6 +55,10 @@ shinyServer(function(input, output, session) {
   ###################
   # Movies by genre #
   ###################
+  
+  output$make_top_movie_list <- renderUI({
+    make_top_movie_list(top_movie_num)
+  }) # renderUI function
   
   genre_movies <- eventReactive(input$submit_genre, {
     withBusyIndicatorServer("submit_genre", {
@@ -69,7 +75,7 @@ shinyServer(function(input, output, session) {
       
       # Return the results
       recom_results <- data.table(
-        Rank = 1:20,
+        Rank = 1:top_movie_num,
         MovieID = movie_list,
         Year = movies$Year[movie_list],
         Title = movies$Title[movie_list]
@@ -81,8 +87,8 @@ shinyServer(function(input, output, session) {
   
   # Display genre recommendations
   output$genre_results <- renderUI({
-    num_rows <- 4
     num_movies <- 5
+    num_rows <- top_movie_num / num_movies
     recom_result <- genre_movies()
     
     lapply(1:num_rows, function(i) {
@@ -94,12 +100,7 @@ shinyServer(function(input, output, session) {
           title = paste0("Rank ", (i - 1) * num_movies + j),
           div(
             style = "text-align:center",
-            a(
-              href = "https://www.google.com",
-              # TODO fix
-              target = 'blank',
-              img(src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150)
-            )
+            img(src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150)
           ),
           div(style = "text-align:center; color: #999999; font-size: 80%",
               movies$Year[recom_result$MovieID[(i - 1) * num_movies + j]]),
@@ -162,10 +163,9 @@ shinyServer(function(input, output, session) {
       # get the indices of which cells in the matrix should be predicted
       # predict all movies the current user has not yet rated
       items_to_predict <- which(rmat[, 1] == 0)
-      prediction_indices <-
-        as.matrix(expand.grid(items_to_predict, 1))
+      prediction_indices <- as.matrix(expand.grid(items_to_predict, 1))
       
-      # run the ubcf-alogrithm
+      # run the UBCF-alogrithm
       res <-
         predict_cf(rmat,
                    prediction_indices,
@@ -181,12 +181,10 @@ shinyServer(function(input, output, session) {
       user_results <- sort(res[, 1], decreasing = TRUE)
       user_results <-
         user_results[which(as.numeric(names(user_results)) <= nrow(movies))]
-      user_results <- user_results[1:20]
+      user_results <- user_results[1:top_movie_num]
       user_predicted_ids <- as.numeric(names(user_results))
-      print(user_results)
-      print(user_predicted_ids)
       recom_results <- data.table(
-        Rank = 1:20,
+        Rank = 1:top_movie_num,
         MovieID = user_predicted_ids,
         Year = movies$Year[user_predicted_ids],
         Title = movies$Title[user_predicted_ids],
@@ -199,8 +197,8 @@ shinyServer(function(input, output, session) {
   
   # Display UBCF recommendations
   output$ubcf_results <- renderUI({
-    num_rows <- 4
     num_movies <- 5
+    num_rows <- top_movie_num / num_movies
     recom_result <- df()
     
     lapply(1:num_rows, function(i) {
@@ -212,12 +210,7 @@ shinyServer(function(input, output, session) {
           title = paste0("Rank ", (i - 1) * num_movies + j),
           div(
             style = "text-align:center",
-            a(
-              href = "https://www.google.com",
-              # TODO fix
-              target = 'blank',
-              img(src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150)
-            )
+            img(src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], height = 150)
           ),
           div(style = "text-align:center; color: #999999; font-size: 80%",
               movies$Year[recom_result$MovieID[(i - 1) * num_movies + j]]),

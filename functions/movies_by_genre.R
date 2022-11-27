@@ -40,10 +40,20 @@ get_rating_count <- function(genre) {
   return(rating_count)
 }
 
+validate_N <- function(N, matrix) {
+  if((class(N) != "numeric") || (N <= 0)) { # default to 0 if user gave bad N
+    N <- 10
+  } else if (N > nrow(matrix)) {
+    N <- nrow(matrix)
+  }
+  
+  return(N)
+}
+
 # Recommendation system 1: Return top N movies in the genre ordered by the
 # mean rating per movie. If multiple movies have the same rating, the movie with
 # more total ratings is returned first.
-mean_rating_by_genre <- function(genre) {
+mean_rating_by_genre <- function(genre, N) {
   
   rating_count <- get_rating_count(genre)
   
@@ -55,7 +65,8 @@ mean_rating_by_genre <- function(genre) {
   rating_means <- rating_means %>% inner_join(rating_count, by = "MovieID")
   rating_means <- rating_means[order(-rating_means$MeanRating, -rating_means$TotalRatings),]
   
-  movie_list <- rating_means[1:20, "MovieID"]
+  N <- validate_N(N, rating_means) # fix N if client gave a bad value
+  movie_list <- rating_means[1:N, "MovieID"]
   movie_indices <- which(movies$MovieID %in% movie_list$MovieID)
   
   return(movie_indices)
@@ -64,7 +75,12 @@ mean_rating_by_genre <- function(genre) {
 
 # Make a cached list of the top 20 films of each genre, to improve performance
 # on the front end
-top_by_genre <- matrix(0, nrow = length(genre_list), ncol = 20)
-for (i in 1:length(genre_list)) {
-  top_by_genre[i,] <- mean_rating_by_genre(genre_list[i])
+make_top_movie_list <- function(N) {
+  top_by_genre <<- matrix(0, nrow = length(genre_list), ncol = N)
+  for (i in 1:length(genre_list)) {
+    top_by_genre[i,] <<- mean_rating_by_genre(genre_list[i], N)
+  }
 }
+
+# make_top_movie_list()
+
