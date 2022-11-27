@@ -91,8 +91,8 @@ find_similarities <-
       similarities <-
         as(
           sparseMatrix(
-            i = datatable$row,
-            j = datatable$column,
+            i = na.omit(datatable$row),
+            j = na.omit(datatable$column),
             x = datatable$rating,
             dims = dims_old,
             dimnames = dimnames_old

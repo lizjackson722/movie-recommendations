@@ -22,7 +22,7 @@ get_user_ratings <- function(value_list) {
   # get the indices of the ratings
   # add the user ratings to the existing rating matrix
   user_ratings <- sparseMatrix(
-    i = dat$MovieID,
+    i = na.omit(dat$MovieID),
     j = rep(1, nrow(dat)),
     x = dat$Rating,
     dims = c(nrow(ratingmat), 1)
@@ -37,7 +37,7 @@ ratings <- get_ratings()
 
 # Reshape to movies x user matrix
 ratingmat <-
-  sparseMatrix(ratings$MovieID, ratings$UserID, x = ratings$Rating) # movie x user matrix
+  sparseMatrix(na.omit(ratings$MovieID), na.omit(ratings$UserID), x = ratings$Rating) # movie x user matrix
 ratingmat <-
   ratingmat[unique(summary(ratingmat)$i), unique(summary(ratingmat)$j)] # remove movies and users with no ratings
 dimnames(ratingmat) <-
@@ -71,7 +71,7 @@ shinyServer(function(input, output, session) {
       # get the user's rating data
       genre <- input$favorite_genre
       movie_list <-
-        as.vector(top_by_genre[which(genre_list == genre), ])
+        as.vector(top_by_genre[which(genre_list == genre),])
       
       # Return the results
       recom_results <- data.table(
@@ -98,10 +98,10 @@ shinyServer(function(input, output, session) {
           status = "success",
           solidHeader = TRUE,
           title = paste0("Rank ", (i - 1) * num_movies + j),
-          div(style = "text-align:center",
-              img(
-                src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], style = "max-width:100%;"
-              )),
+          div(
+            style = "text-align:center",
+            img(src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], style = "max-width:100%;")
+          ),
           div(style = "text-align:center; color: #999999; font-size: 80%",
               movies$Year[recom_result$MovieID[(i - 1) * num_movies + j]]),
           div(style = "text-align:center; font-size: 100%",
@@ -209,10 +209,10 @@ shinyServer(function(input, output, session) {
           status = "success",
           solidHeader = TRUE,
           title = paste0("Rank ", (i - 1) * num_movies + j),
-          div(style = "text-align:center",
-              img(
-                src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], style = "max-width:100%;"
-              )),
+          div(
+            style = "text-align:center",
+            img(src = movies$image_url[recom_result$MovieID[(i - 1) * num_movies + j]], style = "max-width:100%;")
+          ),
           div(style = "text-align:center; color: #999999; font-size: 80%",
               movies$Year[recom_result$MovieID[(i - 1) * num_movies + j]]),
           div(style = "text-align:center; font-size: 100%",

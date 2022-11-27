@@ -17,7 +17,11 @@ shinyUI(fluidPage (
     
     dashboardSidebar(disable = FALSE,
                      sidebarMenu(
-                       menuItem("Select by rating", tabName = "UBCF", icon = icon("star")),
+                       menuItem(
+                         "Select by rating",
+                         tabName = "UBCF",
+                         icon = icon("star")
+                       ),
                        menuItem("Select by genre", tabName = "Genre", icon = icon("fire"))
                      )),
     
@@ -62,9 +66,7 @@ shinyUI(fluidPage (
                                   "favorite_genre", "Favorite genre", genre_list
                                 )),
                                 br(),
-                                withBusyIndicatorUI(
-                                  actionButton("submit_genre", "Submit", class = "btn-warning")
-                                ),
+                                withBusyIndicatorUI(actionButton("submit_genre", "Submit", class = "btn-warning")),
                                 br(),
                                 tableOutput("genre_results")
                               )
