@@ -1,2 +1,2 @@
 # movie-recommendations
-UIUC CS 598 movie recommendation project
+UIUC CS 598 movie recommendation project for Liz Jackson (eaj4). **A lot of the original code for this project came from the [book recommendation app](https://github.com/pspachtholz/BookRecommender) posted on [Campuswire](https://campuswire.com/c/G3D46BBBA/feed/1267).**
